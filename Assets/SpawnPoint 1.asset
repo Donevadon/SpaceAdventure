@@ -1,0 +1,16 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: SpawnPoint 1
+  m_EditorClassIdentifier: Assembly-CSharp::SpawnPoint
+  GameObject: {fileID: 3884398836878172789, guid: 9252275ddfe74e641a9c2c9b33839e50, type: 3}
+  Position: {x: 29, y: 48, z: 0}

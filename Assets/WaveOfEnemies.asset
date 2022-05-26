@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0720ea6480cd438fbfce92ea455d5fbb, type: 3}
+  m_Name: WaveOfEnemies
+  m_EditorClassIdentifier: Assembly-CSharp::WaveOfEnemies
+  points:
+  - {fileID: 11400000, guid: c1b099a0f47000443bc867e3ba701367, type: 2}
+  - {fileID: 11400000, guid: 5470914911eb8f3478afe1a194de5b9b, type: 2}
+  timeToStart: 10
