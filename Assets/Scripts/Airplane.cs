@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using DG.Tweening;
 using UnityEngine;
@@ -53,8 +54,12 @@ public abstract class Airplane : MonoBehaviour, ITakingDamage
         _moveBehavior = GetStartMoveBehavior();
         _gunBehavior = GetStartGunBehavior();
         _controller = GetController();
-        _rotateBehavior.Transform = transform;
+        if(_controller != null)
+            ControllerSubscribe();
+        if(_rotateBehavior != null)
+            _rotateBehavior.Transform = transform;
     }
+
 
     protected abstract IController GetController();
 
@@ -62,11 +67,14 @@ public abstract class Airplane : MonoBehaviour, ITakingDamage
 
     protected abstract IMoveBehavior GetStartMoveBehavior();
 
-    protected virtual void Start()
+    protected virtual void OnEnable()
     {
-        if(_controller != null)
-            ControllerSubscribe();
         _gunBehavior?.Start(0.1f);
+    }
+
+    private void OnDisable()
+    {
+        
     }
 
 

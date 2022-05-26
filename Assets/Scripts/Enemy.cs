@@ -1,26 +1,44 @@
+using System;
 using System.Linq;
 using UnityEngine;
+using Zenject;
 
-internal class Enemy : Airplane
+public class Enemy : Airplane
 {
-    [SerializeField] private Transform[] positions;
+    [SerializeField] private Vector2[] positions;
 
     private EnemyController _control;
+    private IEnemyPoolSetter _poolSetter;
 
-    protected override void Start()
+    [Inject]
+    private void Init(IEnemyPoolSetter poolSetter)
     {
-        base.Start();
-        _control.Start();
+        _poolSetter = poolSetter;
     }
 
     protected override IController GetController()
     {
         _control = new EnemyController(this, transform.position,
-            positions.Select(item => (Vector2) item.position)
+            positions.Select(item => item)
                 .ToArray(),
-            () => Debug.Log("Дошёл"));
+            () =>
+            {
+                gameObject.SetActive(false);
+                _poolSetter.Set(this);
+            });
 
         return _control;
+    }
+
+    protected override void OnEnable()
+    {
+        base.OnEnable();
+        _control.Start();
+    }
+
+    public void StartMove()
+    {
+        _control.Start();
     }
 
     protected override IGunBehavior GetStartGunBehavior()
@@ -32,6 +50,11 @@ internal class Enemy : Airplane
     {
         return new First(transform);
     }
+}
+
+internal interface IEnemyPoolSetter
+{
+    void Set<T>(T enemy) where T: Enemy;
 }
 
 public static class Extentions
