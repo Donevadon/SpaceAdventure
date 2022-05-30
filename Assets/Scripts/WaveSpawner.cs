@@ -5,12 +5,12 @@ using Zenject;
 public class WaveSpawner : MonoBehaviour
 {
     [SerializeField] private WaveOfEnemies[] waves;
-    private IEnemyPoolGetter _enemyGetter;
+    private IPoolGetter<Enemy> _getter;
 
     [Inject]
-    private void Init(IEnemyPoolGetter enemyGetter)
+    private void Init(IPoolGetter<Enemy> getter)
     {
-        _enemyGetter = enemyGetter;
+        _getter = getter;
     }
     private void Start()
     {
@@ -22,7 +22,7 @@ public class WaveSpawner : MonoBehaviour
         foreach (var wave in waves)
         {
             yield return new WaitForSeconds(wave.TimeToStart);
-            wave.Spawn(_enemyGetter);
+            wave.Spawn(_getter);
         }
     }
 }

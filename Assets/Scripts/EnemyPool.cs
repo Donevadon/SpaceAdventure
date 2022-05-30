@@ -1,45 +1,41 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
+using System.Linq;
 using UnityEngine;
 using Zenject;
 
-public class EnemyPool : IEnemyPoolGetter, IEnemyPoolSetter
+public class PrefabPool<T> : IPoolGetter<T>, IPoolSetter<T> where T : MonoBehaviour
 {
     private readonly DiContainer _container;
     private Dictionary<Type, Queue<GameObject>> _queue;
-    private Dictionary<Type, Enemy> _proto;
+    private Dictionary<Type, GameObject> _proto;
 
-    public EnemyPool(DiContainer container)
+    public PrefabPool(DiContainer container)
     {
         _container = container;
-        _queue = new Dictionary<Type, Queue<GameObject>>();
-        _proto = new Dictionary<Type, Enemy>();
-        var enemies = Resources.LoadAll<Enemy>("Enemies");
-        foreach (var enemy in enemies)
-        {
-            var type = enemy.GetType();
-            _queue.Add(type, new Queue<GameObject>());
-            _proto.Add(type, enemy);
-        }
+
+        var objects = Resources.LoadAll<T>(typeof(T).Name);
+        _proto = objects.ToDictionary(item => item.GetType(), item => item.gameObject);
+        _queue = objects.ToDictionary(item => item.GetType(), _ => new Queue<GameObject>());
     }
     
-    public void Spawn(Type proto, Vector3 pointPosition, Quaternion identity)
+    public T Spawn(Type proto, Vector3 pointPosition, Quaternion identity)
     {
-        
-        if (_queue[proto].TryDequeue(out var enemy))
+        if (_queue[proto].TryDequeue(out var gm))
         {
-            enemy.transform.position = pointPosition;
-            enemy.transform.rotation = identity;
-            enemy.SetActive(true);
+            gm.transform.position = pointPosition;
+            gm.transform.rotation = identity;
+            gm.SetActive(true);
         }
         else
         {
-            _container.InstantiatePrefab(_proto[proto], pointPosition, identity, null);
+            gm = _container.InstantiatePrefab(_proto[proto], pointPosition, identity, null);
         }
+
+        return gm.GetComponent<T>();
     }
 
-    public void Set<T>(T enemy) where T : Enemy
+    public void Set(T enemy)
     {
         _queue[enemy.GetType()].Enqueue(enemy.gameObject);
     }

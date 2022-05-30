@@ -10,16 +10,16 @@ internal class WaveOfEnemies: ScriptableObject
     public float TimeToStart => timeToStart;
     
 
-    public void Spawn(IEnemyPoolGetter enemyPoolGetter)
+    public void Spawn(IPoolGetter<Enemy> poolGetter)
     {
         foreach (var point in points)
         {
-            enemyPoolGetter.Spawn(point.Enemy.GetType(), point.Position, Quaternion.identity);
+            poolGetter.Spawn(point.Enemy.GetType(), point.Position, Quaternion.identity);
         }
     }
 }
 
-internal interface IEnemyPoolGetter
+internal interface IPoolGetter<out T>
 {
-    void Spawn(Type proto, Vector3 pointPosition, Quaternion identity);
+    T Spawn(Type proto, Vector3 pointPosition, Quaternion identity);
 }

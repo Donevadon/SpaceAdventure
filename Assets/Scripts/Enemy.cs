@@ -3,15 +3,15 @@ using System.Linq;
 using UnityEngine;
 using Zenject;
 
-public class Enemy : Airplane
+public abstract class Enemy : Airplane
 {
     [SerializeField] private Vector2[] positions;
 
     private EnemyController _control;
-    private IEnemyPoolSetter _poolSetter;
+    private IPoolSetter<Enemy> _poolSetter;
 
     [Inject]
-    private void Init(IEnemyPoolSetter poolSetter)
+    private void Init(IPoolSetter<Enemy> poolSetter)
     {
         _poolSetter = poolSetter;
     }
@@ -41,20 +41,15 @@ public class Enemy : Airplane
         _control.Start();
     }
 
-    protected override IGunBehavior GetStartGunBehavior()
-    {
-        return new DisabledWeapon();
-    }
-
     protected override IMoveBehavior GetStartMoveBehavior()
     {
         return new First(transform);
     }
 }
 
-internal interface IEnemyPoolSetter
+internal interface IPoolSetter<in T> where T : MonoBehaviour
 {
-    void Set<T>(T enemy) where T: Enemy;
+    void Set(T enemy);
 }
 
 public static class Extentions

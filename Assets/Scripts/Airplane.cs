@@ -1,16 +1,13 @@
 using System;
-using System.Collections;
-using DG.Tweening;
 using UnityEngine;
 using Zenject;
-using Object = UnityEngine.Object;
 
 public abstract class Airplane : MonoBehaviour, ITakingDamage
 {
     [SerializeField] private float hp;
     [SerializeField] private float speed;
     private IMoveBehavior _moveBehavior;
-    private IGunBehavior _gunBehavior;
+    private IGun _gun;
     private IRotateBehavior _rotateBehavior;
     private IController _controller;
 
@@ -52,7 +49,7 @@ public abstract class Airplane : MonoBehaviour, ITakingDamage
     private void Awake()
     {
         _moveBehavior = GetStartMoveBehavior();
-        _gunBehavior = GetStartGunBehavior();
+        _gun = GetComponent<IGun>();
         _controller = GetController();
         if(_controller != null)
             ControllerSubscribe();
@@ -62,14 +59,12 @@ public abstract class Airplane : MonoBehaviour, ITakingDamage
 
 
     protected abstract IController GetController();
-
-    protected abstract IGunBehavior GetStartGunBehavior();
-
+    
     protected abstract IMoveBehavior GetStartMoveBehavior();
 
     protected virtual void OnEnable()
     {
-        _gunBehavior?.Start(0.1f);
+        _gun?.StartFire();
     }
 
     private void OnDisable()
@@ -126,40 +121,7 @@ public abstract class Airplane : MonoBehaviour, ITakingDamage
     }
 }
 
-public class FirstGun : IGunBehavior
+public interface IGun
 {
-    private readonly MonoBehaviour _monoBehaviour;
-    private Coroutine _coroutine;
-    public FirstGun(MonoBehaviour monoBehaviour)
-    {
-        _monoBehaviour = monoBehaviour;
-    }
-    public void Start(float frequency)
-    {
-        _coroutine = _monoBehaviour.StartCoroutine(StartFire(frequency));
-    }
-
-    IEnumerator StartFire(float frequency)
-    {
-        var proto = Resources.Load<Bullet>(nameof(Bullet));
-        while (true)
-        {
-            var position = _monoBehaviour.transform.position;
-            var bullet = Object.Instantiate(proto, position, Quaternion.identity);
-            bullet.IgnoreTransform = _monoBehaviour.transform;
-            bullet.transform.DOMove(new Vector3()
-            {
-                x = position.x,
-                y = 30,
-                z = position.z
-            }, 2)
-                .onComplete += () => Object.Destroy(bullet.gameObject);
-            yield return new WaitForSeconds(frequency);
-        }
-    }
-}
-
-public interface IGunBehavior
-{
-    void Start(float frequency);
+    void StartFire();
 }

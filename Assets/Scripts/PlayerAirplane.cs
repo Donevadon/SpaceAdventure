@@ -15,11 +15,6 @@ public class PlayerAirplane : Airplane
         return _controller;
     }
 
-    protected override IGunBehavior GetStartGunBehavior()
-    {
-        return new FirstGun(this);
-    }
-
     protected override IMoveBehavior GetStartMoveBehavior()
     {
         return new First(transform);

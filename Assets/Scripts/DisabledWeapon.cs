@@ -1,6 +1,6 @@
-internal class DisabledWeapon : IGunBehavior
+internal class DisabledWeapon : IGun
 {
-    public void Start(float frequency)
+    public void StartFire()
     {
         
     }

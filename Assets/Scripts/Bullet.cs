@@ -1,12 +1,15 @@
-using System;
 using UnityEngine;
 
 internal class Bullet : MonoBehaviour
 {
-    public Transform IgnoreTransform { get; set; }
+    private Vector2 _direction = Vector2.zero;
+    public Vector2 Direction
+    {
+        set => _direction = value.normalized;
+    }
     private void OnTriggerEnter(Collider other)
     {
-        if (other.transform == IgnoreTransform)
+        if (other.TryGetComponent<Enemy>(out var enemy))
             return;
         
         if (other.TryGetComponent<ITakingDamage>(out var item))
@@ -14,6 +17,11 @@ internal class Bullet : MonoBehaviour
             item.ToDamage(14.5f);
         }
         Destroy(gameObject);
+    }
+
+    private void Update()
+    {
+        transform.position = transform.position + (Vector3)(_direction * Time.deltaTime * 100f);
     }
 }
 
